@@ -1,0 +1,8 @@
+validating for add transaction
+image edit
+routing gourds
+on load error handling
+name convention for state and service
+remove any from types
+
+

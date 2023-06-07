@@ -5,7 +5,4 @@ export {
     axiosPut,
     axiosDelete,
 } from "@/plugins/axios/axios.plugin";
-
-// rtl support
-// darktheme
-// breakpoints
+export { vuetify } from "@/plugins/vuetify/vuetify.plugin";
