@@ -9,5 +9,5 @@ remove any from types - done
 validating for add/update transaction - done
 on load error handling  - done
 
-dark mode
+dark mode - done
 group by with reduce
