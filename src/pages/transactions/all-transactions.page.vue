@@ -55,7 +55,11 @@
         />
 
         <div class="group-by-container mt-4" v-if="groupBy != 'none'">
-            <div v-for="group in getGroupList" :key="group" class="ma-2">
+            <div
+                v-for="group in Object.keys(getGroupByTransactions)"
+                :key="group"
+                class="ma-2"
+            >
                 <v-chip :color="getFieldColor(group)" label class="mb-4">
                     {{ group }}
                 </v-chip>
@@ -65,6 +69,7 @@
                 />
             </div>
         </div>
+        {{ Object.keys(getGroupByTransactions) }}
     </div>
     <v-container class="d-flex justify-center" v-if="!isTransactionData">
         <v-sheet w-100>
@@ -145,7 +150,7 @@ export default {
                     color: "#76FF03",
                 },
                 {
-                    fieldName: ["Jul 2023"],
+                    fieldName: ["Jul 2023", "Transaction Date"],
                     color: "#33691E",
                 },
                 {
@@ -181,7 +186,7 @@ export default {
                     return colorObj;
                 }
             });
-            return colorObj.color;
+            return colorObj?.color;
         },
     },
     computed: {
@@ -203,28 +208,43 @@ export default {
                 return this.getTransactionsState;
             }
         },
-        getGroupList() {
-            const groupList = this.getTransactionsState.map(
-                (transaction) => transaction[this.groupBy]
-            );
-            return [...new Set(groupList)];
-        },
+        // getGroupList() {
+        //     const groupList = this.getTransactionsState.map(
+        //         (transaction) => transaction[this.groupBy]
+        //     );
+        //     return [...new Set(groupList)];
+        // },
         getGroupByTransactions() {
-            const groupList = this.getTransactionsState.map(
-                (transaction) => transaction[this.groupBy]
-            );
-            const list = [...new Set(groupList)];
-            const groupedObject = {};
-            list.forEach((group) => {
-                groupedObject[group] = [];
-            });
-            this.getTransactionsState.forEach((transaction) => {
-                list.forEach((group) => {
-                    if (group === transaction[this.groupBy]) {
-                        groupedObject[group].push(transaction);
+            // const groupList = this.getTransactionsState.map(
+            //     (transaction) => transaction[this.groupBy]
+            // );
+            // const list = [...new Set(groupList)];
+            // const groupedObject = {};
+            // list.forEach((group) => {
+            //     groupedObject[group] = [];
+            // });
+            // this.getTransactionsState.forEach((transaction) => {
+            //     list.forEach((group) => {
+            //         if (group === transaction[this.groupBy]) {
+            //             groupedObject[group].push(transaction);
+            //         }
+            //     });
+            // });
+
+            const groupByObject = (transactions, groupBy) => {
+                return transactions.reduce((groupedData, currentValue) => {
+                    let groupKey = currentValue[groupBy];
+                    if (!groupedData[groupKey]) {
+                        groupedData[groupKey] = [];
                     }
-                });
-            });
+                    groupedData[groupKey].push(currentValue);
+                    return groupedData;
+                }, {});
+            };
+            const groupedObject = groupByObject(
+                this.getTransactionsState,
+                this.groupBy
+            );
             return groupedObject;
         },
     },
