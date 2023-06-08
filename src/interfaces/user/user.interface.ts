@@ -8,4 +8,5 @@ export interface userInterface {
 export interface userStateInterFace {
     isUserLoggedIn: boolean;
     loggedInUserId: number | null;
+    userName: string | null;
 }

@@ -14,6 +14,7 @@
                 <V-Btn class="font-weight-bold"> Add Transaction </V-Btn>
             </router-link>
         </v-toolbar-items>
+
         <v-spacer></v-spacer>
         <v-toolbar-items v-if="!getLoggedInUserState.isUserLoggedIn">
             <router-link
@@ -29,6 +30,9 @@
                 <V-Btn class="font-weight-bold"> SignUp </V-Btn>
             </router-link>
         </v-toolbar-items>
+        <v-chip label v-if="getLoggedInUserState.isUserLoggedIn">{{
+            getLoggedInUserState.userName
+        }}</v-chip>
         <v-toolbar-items v-if="getLoggedInUserState.isUserLoggedIn">
             <V-btn @click="logoutUser">Logout</V-btn>
         </v-toolbar-items>
