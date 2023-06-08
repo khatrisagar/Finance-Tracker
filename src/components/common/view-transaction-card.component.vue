@@ -44,7 +44,7 @@
                             :width="400"
                             aspect-ratio="16/9"
                             cover
-                            :src="transaction.receipt"
+                            :src="transaction.receipt.image"
                         ></v-img>
                     </td>
                 </tr>

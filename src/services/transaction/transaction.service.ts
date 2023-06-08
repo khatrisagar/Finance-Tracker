@@ -1,8 +1,9 @@
 import { transactionInterface } from "@/interfaces";
 export const getTransactionFromLocalStorage = () => {
-    console.log("gettt");
+    const transactions = localStorage.getItem("transactions");
+    return transactions !== null ? JSON.parse(transactions) : [];
 };
-export const setTransactionsToLocalStore = (
+export const setTransactionsToLocalStorage = (
     transactions: transactionInterface
 ) => {
     localStorage.setItem("transactions", JSON.stringify(transactions));

@@ -1,5 +1,5 @@
 <template>
-    <div>
+    <div v-if="isTransactionData">
         <div
             v-if="isLoader"
             class="d-flex align-items-center"
@@ -11,6 +11,7 @@
                     class="d-inline-block"
                     style="width: fit-content"
                     variant="solo-filled"
+                    hide-details="auto"
                     v-model="groupBy"
                     :items="groupBySelections"
                     :item-title="(item) => item.name"
@@ -28,6 +29,7 @@
                 <v-select
                     variant="solo-filled"
                     v-model="searchBy"
+                    hide-details="auto"
                     :items="searchSelections"
                     :item-title="(item) => item.name"
                     :item-value="(item) => item.key"
@@ -38,6 +40,7 @@
             <v-sheet :width="500" class="ml-4">
                 <v-text-field
                     label="Search"
+                    hide-details="auto"
                     v-model="searchValue"
                     @input="searchTransaction"
                 >
@@ -45,44 +48,54 @@
             </v-sheet>
         </div>
         <commonTransactionTable
+            class="mt-4"
             v-if="groupBy == 'none'"
+            :colors="colors"
             :transactionsData="getSearchTransaction"
         />
 
-        <div class="group-by-container" v-if="groupBy != 'none'">
-            <div v-for="group in getGroupList" :key="group">
-                {{ group }}
+        <div class="group-by-container mt-4" v-if="groupBy != 'none'">
+            <div v-for="group in getGroupList" :key="group" class="ma-2">
+                <v-chip :color="getFieldColor(group)" label class="mb-4">
+                    {{ group }}
+                </v-chip>
                 <commonTransactionTable
                     :transactionsData="getGroupByTransactions[group]"
+                    :colors="colors"
                 />
             </div>
         </div>
     </div>
+    <v-container class="d-flex justify-center" v-if="!isTransactionData">
+        <v-sheet w-100>
+            <h2>No Transaction Data Available</h2>
+        </v-sheet>
+    </v-container>
 </template>
 
 <script>
 import commonTransactionTable from "@/components/common/common-transaction-table.component.vue";
 import { mapActions, mapGetters } from "vuex";
-import { getTransactions, setLoggedInUserToStore } from "@/utils";
+import { setUserTransactionState } from "@/utils";
 export default {
     components: {
         commonTransactionTable,
     },
     created() {
-        this.setTransactionsState(getTransactions());
-        setLoggedInUserToStore();
-        // localStorage.setItem(
-        //     "transactions",
-        //     JSON.stringify(this.transactionsData)
-        // );
-        // this.setUserState();
+        setUserTransactionState();
+        if (this.getTransactionsState.length === 0) {
+            this.isTransactionData = false;
+        } else {
+            this.isTransactionData = true;
+        }
     },
     data() {
         return {
+            isTransactionData: true,
             isLoader: true,
             searchValue: null,
-            searchBy: "none",
 
+            searchBy: "none",
             searchSelections: [
                 { name: "none", key: "none" },
                 { name: "Month Year", key: "monthYear" },
@@ -92,6 +105,7 @@ export default {
                 { name: "Amount", key: "amount" },
                 { name: "Transaction Date", key: "transactionDate" },
             ],
+
             groupBy: "none",
             groupBySelections: [
                 { name: "none", key: "none" },
@@ -101,13 +115,80 @@ export default {
                 { name: "To Account", key: "toAccount" },
                 { name: "Transaction Date", key: "transactionDate" },
             ],
+            colors: [
+                {
+                    fieldName: [
+                        "Personal Expense",
+                        "My Dream Home",
+                        "Jan 2023",
+                    ],
+                    color: "#FB8C00",
+                },
+                {
+                    fieldName: ["Home Expense", "Personal Account", "Feb 2023"],
+                    color: "#29B6F6",
+                },
+                {
+                    fieldName: ["Real Living", "Mar 2023"],
+                    color: "#FF3D00",
+                },
+                {
+                    fieldName: ["Full Circle", "Arp 2023"],
+                    color: "#FFC400",
+                },
+                {
+                    fieldName: ["Core Realtors", "May 2023"],
+                    color: "#F9A825",
+                },
+                {
+                    fieldName: ["Big Block", "Jun 2023"],
+                    color: "#76FF03",
+                },
+                {
+                    fieldName: ["Jul 2023"],
+                    color: "#33691E",
+                },
+                {
+                    fieldName: ["Aug 2023"],
+                    color: "#1DE9B6",
+                },
+                {
+                    fieldName: ["Sep 2023"],
+                    color: "#01579B",
+                },
+                {
+                    fieldName: ["Oct 2023"],
+                    color: "#7C4DFF",
+                },
+                {
+                    fieldName: ["Nov 2023"],
+                    color: "#FF4081",
+                },
+                {
+                    fieldName: ["Des 2023"],
+                    color: "#FF5252",
+                },
+            ],
         };
     },
     methods: {
-        ...mapActions({ setTransactionsState: "transaction/setTransactions" }),
+        ...mapActions({
+            setTransactionsState: "transaction/setTransactionsState",
+        }),
+        getFieldColor(name) {
+            const colorObj = this.colors.find((colorObj) => {
+                if (colorObj.fieldName.includes(name)) {
+                    return colorObj;
+                }
+            });
+            return colorObj.color;
+        },
     },
     computed: {
-        ...mapGetters({ getTransactionsState: "transaction/getTransactions" }),
+        ...mapGetters({
+            getTransactionsState: "transaction/getTransactionsState",
+            getLoggedInUserState: "user/getLoggedInUserState",
+        }),
 
         getSearchTransaction() {
             let searchTransaction = [];
@@ -117,7 +198,6 @@ export default {
                         searchTransaction.push(transaction);
                     }
                 });
-                console.log("searchTransaction", searchTransaction);
                 return searchTransaction;
             } else {
                 return this.getTransactionsState;

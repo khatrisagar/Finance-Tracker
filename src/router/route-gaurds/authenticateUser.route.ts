@@ -12,3 +12,16 @@ export const authenticateUser = (
         next({ name: "userLogin" });
     }
 };
+
+export const onUserAuthentication = (
+    to: RouteLocationNormalized,
+    from: RouteLocationNormalized,
+    next: NavigationGuardNext
+) => {
+    const userToken = localStorage.getItem("user_at");
+    if (userToken) {
+        next({ name: "home" });
+    } else {
+        next();
+    }
+};

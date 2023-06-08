@@ -1,5 +1,5 @@
 <template>
-    <v-toolbar app>
+    <v-toolbar color="primary" app>
         <v-toolbar-items class="hidden-xs-only">
             <router-link
                 class="text-decoration-none d-flex align-items-center"
@@ -32,20 +32,47 @@
         <v-toolbar-items v-if="getLoggedInUserState.isUserLoggedIn">
             <V-btn @click="logoutUser">Logout</V-btn>
         </v-toolbar-items>
+        <v-toolbar-items>
+            <v-switch v-model="currentTheme" @change="toggleTheme"></v-switch>
+        </v-toolbar-items>
     </v-toolbar>
 </template>
 
 <script>
 import { mapActions, mapGetters } from "vuex";
+import { getThemefromLocalStorage, setThemeToLocalStorage } from "@/services";
 export default {
+    // mounted() {
+    //     this.currentTheme = false;
+    // },
+    data() {
+        return {
+            currentTheme: null,
+        };
+    },
     computed: {
-        ...mapGetters({ getLoggedInUserState: "user/getLoggedInUserState" }),
+        ...mapGetters({
+            getLoggedInUserState: "user/getLoggedInUserState",
+        }),
     },
     methods: {
-        ...mapActions({ setLogoutUserState: "user/setLogoutUserState" }),
+        ...mapActions({
+            setLogoutUserState: "user/setLogoutUserState",
+        }),
         logoutUser() {
             localStorage.removeItem("user_at");
             this.setLogoutUserState();
+            this.$router.push({ name: "userLogin" });
+        },
+        toggleTheme() {
+            const theme = getThemefromLocalStorage();
+            if (theme === "dark") {
+                setThemeToLocalStorage("light");
+                this.$vuetify.theme.global.name = "light";
+            } else if (theme === "light") {
+                setThemeToLocalStorage("dark");
+                this.$vuetify.theme.global.name = "dark";
+            }
         },
     },
 };

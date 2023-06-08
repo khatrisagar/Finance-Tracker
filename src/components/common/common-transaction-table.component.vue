@@ -1,9 +1,13 @@
 <template>
     <div class="table-wrapper">
-        <v-table theme="light" class="table">
+        <v-table class="table">
             <thead>
                 <tr>
-                    <th v-for="header in tableHeaders" :key="header.key">
+                    <th
+                        v-for="header in tableHeaders"
+                        :key="header.key"
+                        class="text-center"
+                    >
                         <router-link
                             v-if="header.isSortable"
                             :to="{
@@ -28,10 +32,28 @@
                     :key="transaction.id"
                 >
                     <td>{{ transaction.transactionDate }}</td>
-                    <td>{{ transaction.monthYear }}</td>
-                    <td>{{ transaction.transactionType }}</td>
-                    <td>{{ transaction.fromAccount }}</td>
-                    <td>{{ transaction.toAccount }}</td>
+                    <td>
+                        <v-chip :color="getFieldColor(transaction.monthYear)">
+                            {{ transaction.monthYear }}
+                        </v-chip>
+                    </td>
+                    <td>
+                        <v-chip
+                            :color="getFieldColor(transaction.transactionType)"
+                        >
+                            {{ transaction.transactionType }}
+                        </v-chip>
+                    </td>
+                    <td>
+                        <v-chip :color="getFieldColor(transaction.fromAccount)">
+                            {{ transaction.fromAccount }}
+                        </v-chip>
+                    </td>
+                    <td>
+                        <v-chip :color="getFieldColor(transaction.toAccount)">
+                            {{ transaction.toAccount }}
+                        </v-chip>
+                    </td>
                     <td>
                         {{ Intl.NumberFormat().format(transaction.amount) }} $
                     </td>
@@ -41,7 +63,8 @@
                             :width="100"
                             aspect-ratio="16/9"
                             cover
-                            :src="transaction.receipt"
+                            :src="transaction.receipt.image"
+                            :alt="transaction.receipt.name"
                         ></v-img>
                     </td>
                     <td>{{ transaction.notes }}</td>
@@ -77,6 +100,9 @@
 export default {
     props: {
         transactionsData: {
+            type: Object,
+        },
+        colors: {
             type: Object,
         },
     },
@@ -134,6 +160,8 @@ export default {
                     icon: "fa-solid fa-note-sticky",
                     isSortable: true,
                     key: "notes",
+                    align: "left",
+                    width: "100px",
                 },
                 {
                     title: "Action",
@@ -145,7 +173,16 @@ export default {
         };
     },
 
-    methods: {},
+    methods: {
+        getFieldColor(name) {
+            const colorObj = this.colors.find((colorObj) => {
+                if (colorObj.fieldName.includes(name)) {
+                    return colorObj;
+                }
+            });
+            return colorObj.color;
+        },
+    },
     computed: {
         getSortadeTransactions() {
             const sortBy = this.$route.query.sort;
@@ -154,7 +191,7 @@ export default {
                 JSON.stringify(this.transactionsData)
             );
             if (sortBy && this.getSortingOrder) {
-                if (typeof shortedTransactionData[0][sortBy] === "number") {
+                if (typeof shortedTransactionData?.[0]?.[sortBy] === "number") {
                     shortedTransactionData.sort((a, b) => {
                         return a[sortBy] - b[sortBy];
                     });
@@ -171,7 +208,7 @@ export default {
                 }
                 return shortedTransactionData;
             } else if (sortBy && !this.getSortingOrder) {
-                if (typeof shortedTransactionData[0][sortBy] === "number") {
+                if (typeof shortedTransactionData?.[0]?.[sortBy] === "number") {
                     shortedTransactionData.sort((a, b) => {
                         return b[sortBy] - a[sortBy];
                     });
@@ -231,5 +268,9 @@ th,
 td {
     text-align: center;
     padding: 1px;
+}
+td {
+    max-width: 200px !important;
+    word-wrap: break-word;
 }
 </style>

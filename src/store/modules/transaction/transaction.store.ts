@@ -9,23 +9,28 @@ export default {
             currentTransaction: null,
         };
     },
-    // transactionStateInterFace
     mutations: {
-        SET_TRANSACTIONS(state: any, allTransactions: transactionInterface) {
+        SET_TRANSACTIONS(
+            state: transactionStateInterFace,
+            allTransactions: transactionInterface[]
+        ) {
             state.transactions = allTransactions;
         },
-        SET_CURRENT_TRANSACTION(state: any, transaction: transactionInterface) {
+        SET_CURRENT_TRANSACTION(
+            state: transactionStateInterFace,
+            transaction: transactionInterface
+        ) {
             state.currentTransaction = transaction;
         },
     },
     actions: {
-        setTransactions(
+        setTransactionsState(
             { commit }: { commit: Commit },
             transaction: transactionInterface
         ) {
             commit("SET_TRANSACTIONS", transaction);
         },
-        setCurrentTransaction(
+        setCurrentTransactionState(
             { commit }: { commit: Commit },
             transaction: transactionInterface
         ) {
@@ -33,10 +38,10 @@ export default {
         },
     },
     getters: {
-        getTransactions(state: transactionStateInterFace) {
+        getTransactionsState(state: transactionStateInterFace) {
             return state.transactions;
         },
-        getCurrentTransaction(state: transactionStateInterFace) {
+        getCurrentTransactionState(state: transactionStateInterFace) {
             return state.currentTransaction;
         },
     },

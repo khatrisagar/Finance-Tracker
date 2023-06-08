@@ -31,7 +31,8 @@
 </template>
 
 <script>
-import { getUsers, setUsers } from "@/utils";
+import { getUsersFromLocalStorage, setUsersToLocalStorage } from "@/services";
+
 export default {
     data() {
         return {
@@ -76,14 +77,17 @@ export default {
         async onFormSubmit() {
             const { valid } = await this.$refs.form.validate();
             if (valid) {
-                let users = getUsers();
+                let users = getUsersFromLocalStorage();
                 users.push({
                     id: new Date().getTime(),
                     name: this.userName,
                     email: this.userEmail,
                     password: this.userPassword,
+                    transactions: [],
                 });
-                setUsers(users);
+                setUsersToLocalStorage(users);
+
+                this.$router.push({ name: "userLogin" });
             }
         },
     },

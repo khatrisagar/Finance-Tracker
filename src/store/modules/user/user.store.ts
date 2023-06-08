@@ -1,20 +1,21 @@
 import { Commit } from "vuex";
+import { userStateInterFace } from "@/interfaces";
 
 export default {
     namespaced: true,
     state() {
         return {
-            users: [],
+            // users: [],
             isUserLoggedIn: false,
             loggedInUserId: null,
         };
     },
     mutations: {
-        SET_LOGGED_IN_USER(state: any, userId: number) {
+        SET_LOGGED_IN_USER(state: userStateInterFace, userId: number) {
             state.loggedInUserId = userId;
             state.isUserLoggedIn = true;
         },
-        SET_LOGOUT_IN_USER(state: any) {
+        SET_LOGOUT_IN_USER(state: userStateInterFace) {
             state.loggedInUserId = null;
             state.isUserLoggedIn = false;
         },
@@ -28,7 +29,7 @@ export default {
         },
     },
     getters: {
-        getLoggedInUserState(state: any) {
+        getLoggedInUserState(state: userStateInterFace) {
             return {
                 isUserLoggedIn: state.isUserLoggedIn,
                 loggedInUserId: state.loggedInUserId,

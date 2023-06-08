@@ -13,18 +13,23 @@ import transactionForm from "@/pages/transactions/transaction-form.page.vue";
 import pageNotFound from "@/pages/common/page-not-found.page.vue";
 
 // navaigation gaurds
-import { authenticateUser } from "@/router/route-gaurds/authenticateUser.route";
+import {
+    authenticateUser,
+    onUserAuthentication,
+} from "@/router/route-gaurds/authenticateUser.route";
 
 const routes: Array<RouteRecordRaw> = [
     {
         path: "/login",
         name: "userLogin",
         component: userLogin,
+        beforeEnter: onUserAuthentication,
     },
     {
         path: "/register",
         name: "userRegister",
         component: userRegister,
+        beforeEnter: onUserAuthentication,
     },
     {
         path: "/",
@@ -42,16 +47,19 @@ const routes: Array<RouteRecordRaw> = [
         path: "/transactions/create",
         name: "createTransaction",
         component: transactionForm,
+        beforeEnter: authenticateUser,
     },
     {
         path: "/transactions/edit/:transactionId",
         name: "editTransaction",
         component: transactionForm,
+        beforeEnter: authenticateUser,
     },
     {
         path: "/transaction/:transactionId",
         name: "transaction",
         component: viewTransaction,
+        beforeEnter: authenticateUser,
     },
     {
         name: "pageNotFound",

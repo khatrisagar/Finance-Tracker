@@ -1,23 +1,31 @@
 <template>
     <div v-if="isTransactionData">
-        <viewTransactionCard :transaction="getCurrentTransaction" />
+        <viewTransactionCard :transaction="getCurrentTransactionState" />
     </div>
-    <div v-if="!isTransactionData">No transactions Found</div>
+    <v-container class="d-flex justify-center" v-if="!isTransactionData">
+        <v-sheet w-100>
+            <h2>No Transaction Data Available</h2>
+        </v-sheet>
+    </v-container>
 </template>
 
 <script>
 import viewTransactionCard from "@/components/common/view-transaction-card.component.vue";
 import { mapActions, mapGetters } from "vuex";
+import { setUserTransactionState } from "@/utils";
 export default {
     components: {
         viewTransactionCard,
     },
     created() {
-        const currentTransaction = this.getTransactions.find((transaction) => {
-            return transaction.id == this.$route.params.transactionId;
-        });
+        setUserTransactionState();
+        const currentTransaction = this.getTransactionsState.find(
+            (transaction) => {
+                return transaction.id == this.$route.params.transactionId;
+            }
+        );
         if (currentTransaction) {
-            this.setCurrentTransaction(currentTransaction);
+            this.setCurrentTransactionState(currentTransaction);
             this.isTransactionData = true;
         } else {
             this.isTransactionData = false;
@@ -30,13 +38,15 @@ export default {
     },
     methods: {
         ...mapActions({
-            setCurrentTransaction: "transaction/setCurrentTransaction",
+            setCurrentTransactionState:
+                "transaction/setCurrentTransactionState",
         }),
     },
     computed: {
         ...mapGetters({
-            getTransactions: "transaction/getTransactions",
-            getCurrentTransaction: "transaction/getCurrentTransaction",
+            getTransactionsState: "transaction/getTransactionsState",
+            getCurrentTransactionState:
+                "transaction/getCurrentTransactionState",
         }),
     },
 };

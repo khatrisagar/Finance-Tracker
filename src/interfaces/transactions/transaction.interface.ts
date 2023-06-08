@@ -1,5 +1,5 @@
 export interface transactionInterface {
-    id: string;
+    id: number;
     transactionDate: string;
     monthYear: string;
     transactionType: string;
@@ -8,6 +8,7 @@ export interface transactionInterface {
     amount: number;
     receipt: string;
     notes: string;
+    userId: number;
 }
 export interface transactionStateInterFace {
     transactions: Array<transactionInterface>;

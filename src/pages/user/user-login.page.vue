@@ -28,7 +28,11 @@
 </template>
 
 <script>
-import { getUsers } from "@/utils";
+import { setLoggedInUserToStore } from "@/utils";
+import {
+    getUsersFromLocalStorage,
+    setLoggedInUserToLocalStorage,
+} from "@/services";
 export default {
     data() {
         return {
@@ -56,21 +60,23 @@ export default {
         async onFormSubmit() {
             const { valid } = await this.$refs.form.validate();
             if (valid) {
-                const users = getUsers();
-                for (let user of users) {
-                    if (
-                        user.email === this.userEmail &&
-                        user.password === this.userPassword
-                    ) {
-                        localStorage.setItem(
-                            "user_at",
-                            JSON.stringify({ id: user.id })
-                        );
+                const users = getUsersFromLocalStorage();
+                if (users.length) {
+                    for (let user of users) {
+                        if (
+                            user.email === this.userEmail &&
+                            user.password === this.userPassword
+                        ) {
+                            setLoggedInUserToLocalStorage({ id: user.id });
 
-                        this.$router.push({ name: "transactions" });
-                    } else {
-                        this.showLoginError = true;
+                            setLoggedInUserToStore();
+                            this.$router.push({ name: "transactions" });
+                        } else {
+                            this.showLoginError = true;
+                        }
                     }
+                } else {
+                    this.showLoginError = true;
                 }
             }
         },
