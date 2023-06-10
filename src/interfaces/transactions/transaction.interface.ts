@@ -1,3 +1,9 @@
+export interface recieptInterface {
+    size: number;
+    type: string;
+    image: string;
+}
+
 export interface transactionInterface {
     id: number;
     transactionDate: string;
@@ -6,7 +12,7 @@ export interface transactionInterface {
     fromAccount: string;
     toAccount: string;
     amount: number;
-    receipt: string;
+    receipt: Array<recieptInterface>;
     notes: string;
     users: number[];
 }

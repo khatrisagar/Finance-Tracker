@@ -3,12 +3,12 @@
         <v-form @submit.prevent ref="form">
             <v-text-field
                 v-model="userName"
-                :rules="userNameRules"
+                :rules="userRegisterValidation.userNameRules"
                 label="Name"
             ></v-text-field>
             <v-text-field
                 v-model="userEmail"
-                :rules="userEmailRules"
+                :rules="userRegisterValidation.userEmailRules"
                 label="Email"
             ></v-text-field>
             <v-text-field
@@ -20,57 +20,33 @@
                         : 'fa-solid fa-eye-slash'
                 "
                 :type="togglePasswordVisisble ? 'text' : 'password'"
-                :rules="userPasswordRules"
+                :rules="userRegisterValidation.userPasswordRules"
                 @click:append="togglePasswordVisisble = !togglePasswordVisisble"
             ></v-text-field>
             <v-btn type="submit" @click="onFormSubmit" block class="mt-2"
                 >Register User</v-btn
             >
         </v-form>
+        <v-container v-if="warning"
+            ><p class="text-red">{{ warning }}</p></v-container
+        >
     </v-sheet>
 </template>
 
 <script>
 import { getUsersFromLocalStorage, setUsersToLocalStorage } from "@/services";
+import { userRegisterValidation } from "@/validations";
 
 export default {
     data() {
         return {
             togglePasswordVisisble: false,
             userName: null,
-            userNameRules: [
-                (value) => {
-                    if (value) return true;
 
-                    return "User Name Should Not be Empty.";
-                },
-            ],
             userEmail: null,
-            userEmailRules: [
-                (value) => {
-                    if (value) return true;
 
-                    return "Email Should Not be Empty.";
-                },
-                (value) => {
-                    if (/^[a-z.-]+@[a-z.-]+\.[a-z]+$/i.test(value)) return true;
-
-                    return "Must be a valid e-mail.";
-                },
-            ],
             userPassword: null,
-            userPasswordRules: [
-                (value) => {
-                    if (value) return true;
-
-                    return "Password Should Not be Empty.";
-                },
-                (value) => {
-                    if (value?.length > 8) return true;
-
-                    return "Password Should be greater than 8 Digits";
-                },
-            ],
+            warning: null,
         };
     },
     methods: {
@@ -78,17 +54,28 @@ export default {
             const { valid } = await this.$refs.form.validate();
             if (valid) {
                 let users = getUsersFromLocalStorage();
-                users.push({
-                    id: new Date().getTime(),
-                    name: this.userName,
-                    email: this.userEmail,
-                    password: this.userPassword,
-                    transactions: [],
-                });
-                setUsersToLocalStorage(users);
+                const usersEmail = users.map((user) => user.email);
+                if (!usersEmail.includes(this.userEmail)) {
+                    users.push({
+                        id: new Date().getTime(),
+                        name: this.userName,
+                        email: this.userEmail,
+                        password: this.userPassword,
+                        transactions: [],
+                    });
 
-                this.$router.push({ name: "userLogin" });
+                    setUsersToLocalStorage(users);
+
+                    this.$router.push({ name: "userLogin" });
+                } else {
+                    this.warning = "User Already Exists";
+                }
             }
+        },
+    },
+    computed: {
+        userRegisterValidation() {
+            return userRegisterValidation;
         },
     },
 };

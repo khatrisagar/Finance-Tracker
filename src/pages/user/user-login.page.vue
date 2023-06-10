@@ -3,7 +3,7 @@
         <v-form @submit.prevent ref="form">
             <v-text-field
                 v-model="userEmail"
-                :rules="userEmailRules"
+                :rules="userLoginValidation.userEmailRules"
                 label="Email"
             ></v-text-field>
             <v-text-field
@@ -14,7 +14,7 @@
                         : 'fa-solid fa-eye-slash'
                 "
                 :type="togglePasswordVisisble ? 'text' : 'password'"
-                :rules="userPasswordRules"
+                :rules="userLoginValidation.userPasswordRules"
                 label="password"
                 @click:append="togglePasswordVisisble = !togglePasswordVisisble"
             ></v-text-field>
@@ -35,26 +35,16 @@ import {
     getUsersFromLocalStorage,
     setLoggedInUserToLocalStorage,
 } from "@/services";
+
+import { userLoginValidation } from "@/validations";
 export default {
     data() {
         return {
             togglePasswordVisisble: false,
             userEmail: null,
-            userEmailRules: [
-                (value) => {
-                    if (value) return true;
 
-                    return "Email Should Not be Empty.";
-                },
-            ],
             userPassword: null,
-            userPasswordRules: [
-                (value) => {
-                    if (value) return true;
 
-                    return "Pasword  Should Not be Empty.";
-                },
-            ],
             showLoginError: false,
         };
     },
@@ -81,6 +71,11 @@ export default {
                     this.showLoginError = true;
                 }
             }
+        },
+    },
+    computed: {
+        userLoginValidation() {
+            return userLoginValidation;
         },
     },
 };
