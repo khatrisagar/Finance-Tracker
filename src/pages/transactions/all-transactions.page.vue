@@ -206,7 +206,7 @@ export default {
             let searchTransaction = [];
             if (this.searchBy != "none" && this.searchValue) {
                 this.getTransactionsState.forEach((transaction) => {
-                    if (transaction[this.searchBy] == this.searchValue) {
+                    if (transaction[this.searchBy] == this.searchValue.trim()) {
                         searchTransaction.push(transaction);
                     }
                 });
