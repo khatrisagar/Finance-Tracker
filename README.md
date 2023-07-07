@@ -1,4 +1,4 @@
-# vue-js-folder-structure
+# Finance-tracker
 
 ## Project setup
 ```
