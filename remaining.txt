@@ -1,0 +1,13 @@
+8 / 6 / 23
+image edit -  done
+user based transactions -done
+routing gaurds - done
+check service and helpers - done
+name convention for state and service - done
+color chips in selections for from type monthyer and to - done
+remove any from types - done
+validating for add/update transaction - done
+on load error handling  - done
+
+dark mode - done
+group by with reduce
